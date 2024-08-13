@@ -1,7 +1,7 @@
 #ifndef interfaces
 #define interfaces
 
-class ICommsChannel {
+  class ICommsChannel {
   public:
     virtual ~ICommsChannel(){}
 
@@ -76,7 +76,7 @@ class ICarriage {
       @param newStatus - The new status of the carriage.
       @return Statases, the old status of the carriage.
     */
-    virtual Statuses setStatuses(Statuses newStatus) = 0;
+    virtual Statuses setStatus(Statuses newStatus) = 0;
 
     /**
       Prevents the carriage from moving no matter what.
