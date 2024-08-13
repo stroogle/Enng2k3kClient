@@ -1,7 +1,7 @@
 #ifndef interfaces
 #define interfaces
 
-  class ICommsChannel {
+class ICommsChannel {
   public:
     virtual ~ICommsChannel(){}
 
