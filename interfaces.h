@@ -1,42 +1,36 @@
 #ifndef interfaces
 #define interfaces
 
-class ICommsChannel {
+class IESPComms {
   public:
-    virtual ~ICommsChannel(){}
+    virtual ~IESPComms() {}
 
     /**
-     Connect to the socket server.
+    * Sends a given string to the ESP
     */
-    virtual void connect() = 0;
+    virtual void sendStatus(char* message) = 0;
+}
+
+class JobQueue {
+  public:
+    virtual ~IJobQueue() {}
 
     /**
-     Connect to the socket server again
+    * Removes the first message in the queue.
+    * @returns the first message
     */
-    virtual void reconnect() = 0;
+    virtual char* popMessage() = 0;
 
     /**
-     @return bool, true if the CommsChannel has lost connection, false otherwise.
+    * Given a job string, adds it the queue.
     */
-    virtual bool hasLostConnection() = 0;
+    virtual void addJob(char* job) = 0;
 
     /**
-     Ends the session with the socket server.
+    * @returns true if the job queue is not empty, false otherwise.
     */
-    virtual void disconnect() = 0;
-
-    /**
-     reads the latest command sent from the socket server.
-     @return string, the latest command received.
-    */
-    virtual char* readMessage() = 0;
-
-    /**
-     emits a message to the server socket.
-     @param message - the information to be sent to the server.
-    */
-    virtual void sendMessage(char* message) = 0;
-};
+    virtual bool isJobAvailable() = 0;
+}
 
 enum Statuses {
   OK,
@@ -49,11 +43,6 @@ enum Statuses {
 class ICarriage {
   public:
     virtual ~ICarriage(){}
-    
-    /**
-     Tells the carriage that is must go to the next block.
-    */
-    virtual void goToNextBlock() = 0;
 
     /**
      Sets the speed of the carriage.
@@ -76,7 +65,7 @@ class ICarriage {
       @param newStatus - The new status of the carriage.
       @return Statases, the old status of the carriage.
     */
-    virtual Statuses setStatus(Statuses newStatus) = 0;
+    virtual Statuses setStatuses(Statuses newStatus) = 0;
 
     /**
       Prevents the carriage from moving no matter what.
@@ -123,38 +112,6 @@ class IDoor {
     */
     virtual void close() = 0;
 
-    /**
-     Sets the door to be open partially.
-     @param degree - How far the door should be open.
-    */
-    virtual void setOpenDegree(int degree) = 0;
-};
-
-enum TrafficLightColour {
-  GREEN,
-  RED
-};
-
-class ITrafficLightSensor {
-  public:
-    virtual ~ITrafficLightSensor(){}
-
-    virtual bool isGreen() = 0;
-
-    virtual bool isRed() = 0;
-
-    virtual TrafficLightColour getColour() = 0;
-};
-
-// WE HAVEN'T BEEN TOLD WHAT THE IDs ARE YET.
-class IBlockSensor {
-  public:
-    virtual ~IBlockSensor(){}
-
-    /**
-      @return String, the ID of the latest block sensed.
-    */
-    virtual char* getCurrentBlock() = 0;
 };
 
 class IMotorController {
