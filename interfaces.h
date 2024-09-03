@@ -1,16 +1,6 @@
 #ifndef interfaces
 #define interfaces
 
-class IESPComms {
-  public:
-    virtual ~IESPComms() {}
-
-    /**
-    * Sends a given string to the ESP
-    */
-    virtual void sendStatus(char* message) = 0;
-}
-
 class JobQueue {
   public:
     virtual ~IJobQueue() {}
