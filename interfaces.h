@@ -1,7 +1,7 @@
 #ifndef interfaces
 #define interfaces
 
-class JobQueue {
+class IJobQueue {
   public:
     virtual ~IJobQueue() {}
 
@@ -20,7 +20,7 @@ class JobQueue {
     * @returns true if the job queue is not empty, false otherwise.
     */
     virtual bool isJobAvailable() = 0;
-}
+};
 
 enum Statuses {
   OK,
