@@ -1,16 +1,30 @@
 #include <WiFi.h>
 #include <ArduinoJson.h>
+#include "interfaces.h"
 
 class CommsChannel {
 public:
     // Constructor
-    CommsChannel(const char* ssid, const char* password)
-        : ssid(ssid), password(password), lastResponseTime(0) {}
+    CommsChannel(
+        const char* ssid,
+        const char* password,
+        const char* server,
+        const int port,
+        IJobQueue* jobs_for_server,
+        IJobQueue* jobs_for_client
+        )
+        : ssid(ssid),
+        password(password),
+        lastResponseTime(0),
+        server(server),
+        port(port),
+        jobs_for_server(jobs_for_server),
+        jobs_for_client(jobs_for_client) {}
 
     // Methods
     void connect() {
         initConnection();
-        if (client.connect("SERVER_IP", SERVER_PORT)) {  // need Replace with actual server IP and port
+        if (client.connect(server, port)) {  // need Replace with actual server IP and port
             Serial.println("Connected to CCP");
         } else {
             Serial.println("Connection to CCP failed");
@@ -39,18 +53,18 @@ public:
         Serial.println("Disconnected from CCP");
     }
 
-    void sendMsg(const JsonDocument& json) {
+    void sendMsg(char* message) {
         if (client.connected()) {
-            serializeJson(json, client);
-            client.println();  // Ensure proper transmission
+            client.println(message);
         }
     }
 
-    void receiveMsg(JsonDocument& json) {
+    void receiveMsg() {
         if (client.available()) {
-            String message = client.readStringUntil('\n');
-            deserializeJson(json, message);
-            lastResponseTime = millis();
+            byte buffer[10];
+            client.readBytes(buffer, sizeof(buffer));
+            jobs_for_client->addJob((char*)buffer);
+            free(buffer);
         }
     }
 
@@ -60,6 +74,10 @@ private:
     WiFiClient client;
     unsigned long lastResponseTime;
     const unsigned long timeout = 500; // 500 milliseconds
+    const char* server;
+    const int port;
+    IJobQueue* jobs_for_server;
+    IJobQueue* jobs_for_client;
 
     void initConnection() {
         WiFi.begin(ssid, password);
