@@ -126,4 +126,11 @@ class IWifiComm {
     virtual void connect() = 0;
 };
 
+class IPhotoReceptor {
+  public:
+    virtual ~IPhotoReceptor(){}
+
+    virtual bool tripped() = 0;
+};
+
 #endif
