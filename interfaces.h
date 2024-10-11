@@ -12,7 +12,6 @@ class ICarriage {
 
     /**
       @param newStatus - The new status of the carriage.
-      @return Statases, the old status of the carriage.
     */
     virtual void setStatus(char* newStatus) = 0;
 
