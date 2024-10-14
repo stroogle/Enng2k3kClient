@@ -37,7 +37,7 @@ class Carriage : public ICarriage {
         }
         
         char* getStatus() {
-            return "UNKNOWN";
+            return status;
         }
 
         void setStatus(char* newStatus) {
@@ -46,7 +46,9 @@ class Carriage : public ICarriage {
 
         void wait() {}
         
-        void stop() {}
+        void stop() {
+          motor->setSpeed(0);
+        }
     
         void go() {
           motor->setSpeed(fastSpeed);
@@ -54,9 +56,13 @@ class Carriage : public ICarriage {
         
         void run() {}
 
-        void closeDoor() {}
+        void closeDoor() {
+          door->close();
+        }
 
-        void openDoor() {}
+        void openDoor() {
+          door->open();
+        }
 
         void slow() {
           motor->setSpeed(slowSpeed);

@@ -5,6 +5,7 @@ class SocketClient : public ISocketClient {
   public:
     SocketClient(char* host, int port){
       connect(host, port);
+      lastBeat = millis();
     }
 
     void connect(char* host, int port) {
@@ -17,6 +18,7 @@ class SocketClient : public ISocketClient {
 
     void sendStatus(char* stat){
       client.println(stat);
+      lastBeat = millis();
     };
 
     Actions getAction() {
@@ -46,10 +48,11 @@ class SocketClient : public ISocketClient {
     }
 
     bool readyForHeartBeat() {
-      return false;
+      return (millis() - lastBeat) >= 2000;
     };
 
   private:
     WiFiClient client;
+    int lastBeat;
   
 };

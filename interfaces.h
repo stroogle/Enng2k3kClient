@@ -41,14 +41,16 @@ class ICarriage {
     virtual bool shouldStop() = 0;
 };
 
+enum Statuses {
+  CONNECTING,
+  DISCONNECTED
+};
+
 class ILED {
   public:
     virtual ~ILED(){}
 
-    /**
-      @param status - The status for the LEDs to display.
-    */
-    virtual void displayStatus() = 0;
+    virtual void displayStatus(Statuses status) = 0;
 };
 
 class IDoor {

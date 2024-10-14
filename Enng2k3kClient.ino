@@ -7,6 +7,7 @@
 #include "./PhotoReceptor.cpp"
 #include "./Carriage.cpp"
 #include "./UltraSonicSensor.cpp"
+#include "./DoorController.cpp"
 
 /* CONFIGURATION */
 
@@ -24,6 +25,8 @@ const int FRONT_SENSOR_PIN_2 = 27;
 
 const int BACK_SENSOR_PIN_1 = 32;
 const int BACK_SENSOR_PIN_2 = 33;
+
+const bool ARE_THE_MOTOR_PINS_BACKWARD = false;
 
 /* END CONFIGURATION */
 
@@ -58,10 +61,6 @@ ICarriage* bladeRunner;
 
 void setup() {
 
-    pinMode(motor1Pin1, OUTPUT);
-    pinMode(motor1Pin2, OUTPUT);
-    pinMode(enable1Pin, OUTPUT);
-
     pinMode(LED_PIN, OUTPUT);
 
     comms = new CommsChannel(WIFI_NAME, WIFI_PASSWORD);
@@ -69,6 +68,16 @@ void setup() {
     comms->connect();
 
     socket = new SocketClient(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
+
+    if (ARE_THE_MOTOR_PINS_BACKWARD) {
+      int temp = motor1Pin1;
+      motor1Pin1 = motor1Pin2;
+      motor1Pin2 = temp;
+    }
+
+    motor = new MotorController(motor1Pin1, motor1Pin2, enable1Pin);
+
+    door = new DoorController();
 
     photoReceptor = new PhotoReceptor(PHOTO_RECEPTOR_PIN);
 
