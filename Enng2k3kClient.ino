@@ -8,6 +8,7 @@
 #include "./Carriage.cpp"
 #include "./UltraSonicSensor.cpp"
 #include "./DoorController.cpp"
+#include "./LEDController.cpp"
 
 /* CONFIGURATION */
 
@@ -20,7 +21,7 @@ const int MOTOR_PIN = 19;
 const int LED_PIN = 17;
 const int PHOTO_RECEPTOR_PIN = 9;
 
-const int FRONT_SENSOR_PIN_1 = 26;
+const int FRONT_SENSOR_PIN_1 = 26; 
 const int FRONT_SENSOR_PIN_2 = 27;
 
 const int BACK_SENSOR_PIN_1 = 32;
@@ -63,11 +64,11 @@ void setup() {
 
     pinMode(LED_PIN, OUTPUT);
 
-    comms = new CommsChannel(WIFI_NAME, WIFI_PASSWORD);
+    // comms = new CommsChannel(WIFI_NAME, WIFI_PASSWORD);
 
-    comms->connect();
+    // comms->connect();
 
-    socket = new SocketClient(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
+    // socket = new SocketClient(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
 
     if (ARE_THE_MOTOR_PINS_BACKWARD) {
       int temp = motor1Pin1;
@@ -81,6 +82,8 @@ void setup() {
 
     photoReceptor = new PhotoReceptor(PHOTO_RECEPTOR_PIN);
 
+    led = new LEDController(17, 18, 19);
+
     frontSensor = new UltraSonicSensor(FRONT_SENSOR_PIN_1, FRONT_SENSOR_PIN_2);
     backSensor = new UltraSonicSensor(BACK_SENSOR_PIN_1, BACK_SENSOR_PIN_2);
 
@@ -89,67 +92,81 @@ void setup() {
 
 void loop() {
 
-    /*
-    * If Wifi is not connect, try reconnect again and then restart loop.
-    */
-    if(WiFi.status() != WL_CONNECTED) {
-      comms->connect();
-      return;
+    led->setsColour(255, 0, 0);
+    delay(1000);
+    led->setsColour(0, 255, 0);
+    delay(1000);
+    led->setsColour(0, 0, 255);
+
+    if(frontSensor->isTooClose()) {
+      Serial.println("Front Sensor Triggered!");
     }
 
-    /*
-    * If socker connection is unavailable, the loop should try connect and restart.
-    */
-    if(!socket->available()) {
-      socket->connect(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
-      return;
+    if(photoReceptor->triggered()) {
+      Serial.println("AHHHHHHHHHHHHHH");
     }
 
-    /*
-    * Capture the next instruction
-    */
-    Actions nextAction = socket->getAction();
+    // /*
+    // * If Wifi is not connect, try reconnect again and then restart loop.
+    // */
+    // if(WiFi.status() != WL_CONNECTED) {
+    //   comms->connect();
+    //   return;
+    // }
 
-    /*
-    * Overwrite instruction if direct situation says to stop
-    */
-    if(bladeRunner->shouldStop()) {
-      nextAction = Actions::STOP;
-    }
+    // /*
+    // * If socker connection is unavailable, the loop should try connect and restart.
+    // */
+    // if(!socket->available()) {
+    //   socket->connect(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
+    //   return;
+    // }
 
-    /*
-    * Execute the next instruction
-    */
-    switch(nextAction) {
-      case Actions::NONE:
-        break;
-      case Actions::DOOR_CLOSE:
-        bladeRunner->closeDoor();
-        break;
-      case Actions::DOOR_OPEN:
-        bladeRunner->openDoor();
-        break;
-      case Actions::GO:
-        bladeRunner->go();
-        break;
-      case Actions::SLOW:
-        bladeRunner->slow();
-        break;
-      case Actions::STOP:
-        bladeRunner->stop();
-      default:
-        break;
-    }
+    // /*
+    // * Capture the next instruction
+    // */
+    // Actions nextAction = socket->getAction();
 
-    /*
-    * When it is time for a status update, send one.
-    */
-    if(socket->readyForHeartBeat()) {
-      socket->sendStatus(bladeRunner->getStatus());
-    }
+    // /*
+    // * Overwrite instruction if direct situation says to stop
+    // */
+    // if(bladeRunner->shouldStop()) {
+    //   nextAction = Actions::STOP;
+    // }
 
-    /*
-    * Using the RBG light, display the current status.
-    */
-    bladeRunner->displayStatus();
+    // /*
+    // * Execute the next instruction
+    // */
+    // switch(nextAction) {
+    //   case Actions::NONE:
+    //     break;
+    //   case Actions::DOOR_CLOSE:
+    //     bladeRunner->closeDoor();
+    //     break;
+    //   case Actions::DOOR_OPEN:
+    //     bladeRunner->openDoor();
+    //     break;
+    //   case Actions::GO:
+    //     bladeRunner->go();
+    //     break;
+    //   case Actions::SLOW:
+    //     bladeRunner->slow();
+    //     break;
+    //   case Actions::STOP:
+    //     bladeRunner->stop();
+    //   default:
+    //     break;
+    // }
+
+    // /*
+    // * When it is time for a status update, send one.
+    // */
+    // if(socket->readyForHeartBeat()) {
+    //   socket->sendStatus(bladeRunner->getStatus());
+    // }
+
+    // /*
+    // * Using the RBG light, display the current status.
+    // */
+    // bladeRunner->displayStatus();
 }

@@ -51,6 +51,8 @@ class ILED {
     virtual ~ILED(){}
 
     virtual void displayStatus(Statuses status) = 0;
+
+    virtual void setsColour(int red, int green, int blue) = 0;
 };
 
 class IDoor {
