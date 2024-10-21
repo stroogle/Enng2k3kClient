@@ -54,7 +54,7 @@ IWifiComm* comms;
 ISocketClient* socket;
 
 // Photoreceptor
-PhotoReceptor* photoReceptor;
+IPhotoReceptor* photoReceptor;
 
 // Carriage
 ICarriage* bladeRunner;
@@ -84,7 +84,7 @@ void setup() {
     frontSensor = new UltraSonicSensor(FRONT_SENSOR_PIN_1, FRONT_SENSOR_PIN_2);
     backSensor = new UltraSonicSensor(BACK_SENSOR_PIN_1, BACK_SENSOR_PIN_2);
 
-    bladeRunner = new Carriage(motor, door, led, frontSensor, backSensor, socket);
+    bladeRunner = new Carriage(motor, door, led, frontSensor, backSensor, socket, photoReceptor);
 }
 
 void loop() {

@@ -1,6 +1,7 @@
 #include "Arduino.h"
+#include "interfaces.h"
 
-class PhotoReceptor {
+class PhotoReceptor : public IPhotoReceptor {
 
   public:
     PhotoReceptor(int pin){
@@ -8,7 +9,7 @@ class PhotoReceptor {
       pinMode(receptor_pin, INPUT_PULLUP);
     };
 
-    bool triggered() {
+    bool tripped() {
       return digitalRead(receptor_pin) == LOW;
     }
 

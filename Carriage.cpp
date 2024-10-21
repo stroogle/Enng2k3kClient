@@ -13,6 +13,7 @@ class Carriage : public ICarriage {
         IDistanceSensor* frontSensor;
         IDistanceSensor* backSensor;
         ISocketClient* socket;
+        IPhotoReceptor* photoReceptor;
 
     public:
         Carriage(
@@ -21,7 +22,8 @@ class Carriage : public ICarriage {
           ILED* ledInput,
           IDistanceSensor* frontSensorInput,
           IDistanceSensor* backSensorInput,
-          ISocketClient* socketInput
+          ISocketClient* socketInput,
+          IPhotoReceptor* photoInput
         ){
           motor = motorInput;
           door = doorInput;
@@ -29,6 +31,7 @@ class Carriage : public ICarriage {
           frontSensor = frontSensorInput;
           backSensor = backSensorInput;
           socket = socketInput;
+          photoReceptor = photoInput;
         }
         
         int setSpeed(int speed) {
@@ -105,30 +108,42 @@ class Carriage : public ICarriage {
 
 
         void stopc() {
-
+          stop();
+          closeDoor();
+          socket->sendStatus("STOPC");
         }
 
         void stopo() {
-
+          stop();
+          openDoor();
+          socket->sendStatus("STOPO");
         }
 
         void fslowc() {
-
+          slow();
+          while(!photoReceptor->tripped()){}
+          stop();
+          socket->sendStatus("STOPC");
         }
 
         void ffastc() {
-
+          closeDoor();
+          go();
+          socket->sendStatus("FFASTC");
         }
 
         void rslowc() {
-
+          reverse();
+          while(!photoReceptor->tripped()){}
+          stop();
+          socket->sendStatus("STOPC");
         }
 
         void strq() {
-
+          socket->sendStatus(getStatus());
         }
 
         void disconnect() {
-
+          socket->sendStatus("OFLN");
         }
 };
