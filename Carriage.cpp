@@ -12,6 +12,7 @@ class Carriage : public ICarriage {
         ILED* led;
         IDistanceSensor* frontSensor;
         IDistanceSensor* backSensor;
+        ISocketClient* socket;
 
     public:
         Carriage(
@@ -19,13 +20,15 @@ class Carriage : public ICarriage {
           IDoor* doorInput,
           ILED* ledInput,
           IDistanceSensor* frontSensorInput,
-          IDistanceSensor* backSensorInput
+          IDistanceSensor* backSensorInput,
+          ISocketClient* socketInput
         ){
           motor = motorInput;
           door = doorInput;
           led = ledInput;
           frontSensor = frontSensorInput;
           backSensor = backSensorInput;
+          socket = socketInput;
         }
         
         int setSpeed(int speed) {
@@ -40,8 +43,29 @@ class Carriage : public ICarriage {
             return status;
         }
 
-        void setStatus(char* newStatus) {
-            status = newStatus;
+        void setStatus(Actions stat) {
+            switch(stat) {
+              case Actions::STOPC:
+                status = "STOPC";
+                break;
+              case Actions::STOPO:
+                status = "STOPO";
+                break;
+              case Actions::FSLOWC:
+                status = "STOPC";
+                break;
+              case Actions::FFASTC:
+                status = "STOPC";
+                break;
+              case Actions::RSLOWC:
+                status = "STOPC";
+                break;
+              case Actions::DISCONNECT:
+                status = "STOPC";
+                break;
+              default:
+                status = "STOPC";
+            }
         };
 
         void wait() {}
@@ -72,5 +96,39 @@ class Carriage : public ICarriage {
 
         bool shouldStop() {
           return (frontSensor->isTooClose() || backSensor->isTooClose());
+        }
+
+        void reverse() {
+          motor->setSpeed(0-slowSpeed);
+        }
+
+
+
+        void stopc() {
+
+        }
+
+        void stopo() {
+
+        }
+
+        void fslowc() {
+
+        }
+
+        void ffastc() {
+
+        }
+
+        void rslowc() {
+
+        }
+
+        void strq() {
+
+        }
+
+        void disconnect() {
+
         }
 };

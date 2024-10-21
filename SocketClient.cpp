@@ -25,18 +25,22 @@ class SocketClient : public ISocketClient {
       int message = getMessage();
       switch(message) {
         case 1:
-          return GO;
+          return STOPC;
           break;
         case 2:
-          return STOP;
+          return STOPO;
           break;
         case 3:
-          return DOOR_OPEN;
+          return FSLOWC;
           break;
         case 4:
-          return DOOR_CLOSE;
+          return FFASTC;
         case 5:
-          return SLOW;
+          return RSLOWC;
+        case 6:
+          return DISCONNECT;
+        case 7:
+          return STRQ;
         default:
           return NONE;
           break;

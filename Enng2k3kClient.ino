@@ -84,7 +84,7 @@ void setup() {
     frontSensor = new UltraSonicSensor(FRONT_SENSOR_PIN_1, FRONT_SENSOR_PIN_2);
     backSensor = new UltraSonicSensor(BACK_SENSOR_PIN_1, BACK_SENSOR_PIN_2);
 
-    bladeRunner = new Carriage(motor, door, led, frontSensor, backSensor);
+    bladeRunner = new Carriage(motor, door, led, frontSensor, backSensor, socket);
 }
 
 void loop() {
@@ -123,30 +123,58 @@ void loop() {
     switch(nextAction) {
       case Actions::NONE:
         break;
-      case Actions::DOOR_CLOSE:
-        bladeRunner->closeDoor();
+      case Actions::STOPC:
+        // bladeRunner->stop();
+        // bladeRunner->closeDoor();
+        // socket->sendStatus("STOPC");
+        bladeRunner->stopc();
         break;
-      case Actions::DOOR_OPEN:
-        bladeRunner->openDoor();
+      case Actions::STOPO:
+        // bladeRunner->stop();
+        // bladeRunner->openDoor();
+        // socket->sendStatus("STOPO");
+        bladeRunner->stopo();
         break;
-      case Actions::GO:
-        bladeRunner->go();
+      case Actions::FSLOWC:
+        // bladeRunner->closeDoor();
+        // bladeRunner->slow();
+        // socket->sendStatus("STOPC");
+        bladeRunner->fslowc();
         break;
-      case Actions::SLOW:
-        bladeRunner->slow();
+      case Actions::FFASTC:
+        // bladeRunner->closeDoor();
+        // bladeRunner->go();
+        // socket->sendStatus("FFASTC");
+        bladeRunner->ffastc();
+        break;
+      case Actions::RSLOWC:
+        // bladeRunner->closeDoor();
+        // bladeRunner->reverse();
+        // socket->sendStatus("STOPC");
+        bladeRunner->rslowc();
+        break;
+      case Actions::DISCONNECT:
+        // socket->sendStatus("OFLN");
+        bladeRunner->disconnect();
+        break;
+      case Actions::STRQ:
+        // socket->sendStatus(bladeRunner->getStatus());
+        bladeRunner->strq();
         break;
       case Actions::STOP:
         bladeRunner->stop();
+        // socket->sendStatus("STOPC");
+        break;
       default:
         break;
     }
 
-    /*
-    * When it is time for a status update, send one.
-    */
-    if(socket->readyForHeartBeat()) {
-      socket->sendStatus(bladeRunner->getStatus());
-    }
+    // /*
+    // * When it is time for a status update, send one.
+    // */
+    // if(socket->readyForHeartBeat()) {
+    //   socket->sendStatus(bladeRunner->getStatus());
+    // }
 
     /*
     * Using the RBG light, display the current status.

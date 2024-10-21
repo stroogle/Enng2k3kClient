@@ -9,7 +9,7 @@ class PhotoReceptor {
     };
 
     bool triggered() {
-      digitalRead(receptor_pin) == LOW;
+      return digitalRead(receptor_pin) == LOW;
     }
 
   private:

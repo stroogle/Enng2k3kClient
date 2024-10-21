@@ -1,6 +1,18 @@
 #ifndef interfaces
 #define interfaces
 
+enum Actions {
+  NONE,
+  STOPC,
+  STOPO,
+  FSLOWC,
+  FFASTC,
+  RSLOWC,
+  DISCONNECT,
+  STRQ,
+  STOP
+};
+
 class ICarriage {
   public:
     virtual ~ICarriage(){}
@@ -13,7 +25,7 @@ class ICarriage {
     /**
       @param newStatus - The new status of the carriage.
     */
-    virtual void setStatus(char* newStatus) = 0;
+    virtual void setStatus(Actions stat) = 0;
 
     /**
       Stops the carriage from going no matter what.
@@ -39,6 +51,22 @@ class ICarriage {
     virtual void displayStatus() = 0;
 
     virtual bool shouldStop() = 0;
+
+    virtual void reverse() = 0;
+
+    virtual void stopc() = 0;
+
+    virtual void stopo() = 0;
+
+    virtual void fslowc() = 0;
+
+    virtual void ffastc() = 0;
+
+    virtual void rslowc() = 0;
+
+    virtual void strq() = 0;
+
+    virtual void disconnect() = 0;
 };
 
 enum Statuses {
@@ -83,15 +111,6 @@ class IMotorController {
       @return int, the speed the motor was going previously.
     */
     virtual int setSpeed(int speed) = 0;
-};
-
-enum Actions {
-  NONE,
-  GO,
-  STOP,
-  DOOR_OPEN,
-  DOOR_CLOSE,
-  SLOW
 };
 
 class ISocketClient {

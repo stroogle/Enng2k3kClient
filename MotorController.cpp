@@ -21,6 +21,25 @@ class MotorController : public IMotorController {
     int setSpeed(int speedInput){
       int oldSpeed = speed;
       speed = speedInput;
+
+      if(speedInput < 0) {
+        speed = speedInput * -1;
+      }
+
+      if(speed == 0) {
+        digitalWrite(pin1, LOW);
+        digitalWrite(pin2, LOW);
+        analogWrite(enablePin, speed);
+      } else if (speedInput < 0) {
+        digitalWrite(pin1, LOW);
+        digitalWrite(pin2, HIGH);
+        analogWrite(enablePin, speed);
+      } else {
+        digitalWrite(pin1, HIGH);
+        digitalWrite(pin2, LOW);
+        analogWrite(enablePin, speed);
+      }
+
       return oldSpeed;
     }
 
