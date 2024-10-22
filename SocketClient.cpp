@@ -10,6 +10,7 @@ class SocketClient : public ISocketClient {
 
     void connect(char* host, int port) {
       client.connect(host, port);
+      sendStatus("HELO");
     }
   
     int getMessage() {

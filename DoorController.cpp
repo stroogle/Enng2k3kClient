@@ -1,6 +1,6 @@
 #include "interfaces.h"
 #include "Arduino.h"
-#include "Servo.h"
+#include <ESP32Servo.h>
 
 class DoorController : public IDoor {
   public:

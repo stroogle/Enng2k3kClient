@@ -14,8 +14,8 @@
 
 char* WIFI_NAME = "ENGG2K3K";
 char* WIFI_PASSWORD = "";
-char* SOCKET_SERVER_ADDRESS = "";
-int SOCKET_SERVER_PORT = 1234;
+char* SOCKET_SERVER_ADDRESS = "10.20.30.174";
+int SOCKET_SERVER_PORT = 2006;
 
 int MOTOR_PIN = 19;
 int LED_PIN = 17;
@@ -63,6 +63,7 @@ IPhotoReceptor* photoReceptor;
 ICarriage* bladeRunner;
 
 void setup() {
+    Serial.begin(115200);
 
     pinMode(LED_PIN, OUTPUT);
 
