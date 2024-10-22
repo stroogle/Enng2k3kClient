@@ -2,6 +2,15 @@
 #include "ArduinoJson.h"
 #include "interfaces.h"
 
+// Set your Static IP address
+IPAddress local_IP(192, 168, 1, 184);
+// Set your Gateway IP address
+IPAddress gateway(192, 168, 1, 1);
+
+IPAddress subnet(255, 255, 0, 0);
+IPAddress primaryDNS(8, 8, 8, 8);   // optional
+IPAddress secondaryDNS(8, 8, 4, 4); // optional
+
 class CommsChannel : public IWifiComm {
 public:
     // Constructor
@@ -70,6 +79,7 @@ private:
     int port;
 
     void initConnection() {
+        WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS);
         WiFi.begin(ssid, password);
         while (WiFi.status() != WL_CONNECTED) {
             delay(1000);
