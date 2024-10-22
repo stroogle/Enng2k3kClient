@@ -27,6 +27,8 @@ int FRONT_SENSOR_PIN_2 = 27;
 int BACK_SENSOR_PIN_1 = 32;
 int BACK_SENSOR_PIN_2 = 33;
 
+int SERVO_PIN = 5;
+
 bool ARE_THE_MOTOR_PINS_BACKWARD = false;
 
 /* END CONFIGURATION */
@@ -77,7 +79,7 @@ void setup() {
 
     motor = new MotorController(motor1Pin1, motor1Pin2, enable1Pin);
 
-    door = new DoorController();
+    door = new DoorController(SERVO_PIN);
 
     photoReceptor = new PhotoReceptor(PHOTO_RECEPTOR_PIN);
 
