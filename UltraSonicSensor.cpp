@@ -8,7 +8,7 @@ class UltraSonicSensor : public IDistanceSensor {
   private:
     int sTrigPin;
     int sEchoPin;
-    const float safeDistCM = 20.0;
+    const float safeDistCM = 5.0;
     const float soundSpeed = 0.034; // cm per microsecond
     float sDist = 0;
 
