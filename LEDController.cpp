@@ -7,49 +7,78 @@ class LEDController : public ILED {
       pin1 = ledPin1;
       pin2 = ledPin2;
       pin3 = ledPin3;
+      prev_flash = millis();
+      flash_interval = 0;
+      mode = 1;
+      off = false;
     }
 
     void useLED(int num){
-      if(num==1){ // Connected
+      mode = num;
+    }
+
+    void setFlashRate(int n) {
+      flash_interval = n;
+    }
+
+    void run() {
+
+      if(millis() - flash_interval > prev_flash) {
+        digitalWrite(pin1, LOW);
+        digitalWrite(pin2, LOW);
+        digitalWrite(pin3, LOW);
+        return;
+      }
+      if(mode==1){ // Connected
         digitalWrite(pin1, HIGH);  // FLASH GREEN
         digitalWrite(pin2, LOW);
         digitalWrite(pin3, LOW);
 
-      } else if(num==2) {  // Slow
+      } else if(mode==2) {  // Slow
 
         digitalWrite(pin1, HIGH);  //YELLOW
         digitalWrite(pin2, HIGH);
         digitalWrite(pin3, LOW);
 
-      } else if(num==3) {  // Go
+      } else if(mode==3) {  // Go
 
         digitalWrite(pin1, LOW);  //GREEN
         digitalWrite(pin2, HIGH);
         digitalWrite(pin3, LOW);
         
-      } else if(num==4) {  // Reverse
+      } else if(mode==4) {  // Reverse
 
         digitalWrite(pin1, HIGH);  //FLASH YELLOW
         digitalWrite(pin2, HIGH);
         digitalWrite(pin3, LOW);
 
-      } else if(num==5) {  // Stopped
+      } else if(mode==5) {  // Stopped
 
         digitalWrite(pin1, HIGH);  //RED
         digitalWrite(pin2, LOW);
         digitalWrite(pin3, LOW);
-        
-      } else if(num==6) {  // Disconnected
+
+      } else if(mode==6) {  // Disconnected
 
         digitalWrite(pin1, HIGH);  //FLASH RED
         digitalWrite(pin2, LOW);
         digitalWrite(pin3, LOW);
-
       }
 
+      if(millis() - prev_flash > flash_interval * 2 ) {
+        prev_flash = millis();
+        return;
+      }
     }
 
-  private:
-    int pin;
+    
 
+  private:
+    int pin1;
+    int pin2;
+    int pin3;
+    int flash_interval = 0;
+    long prev_flash;
+    int mode;
+    bool off;
 };

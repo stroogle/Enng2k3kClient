@@ -8,6 +8,7 @@
 #include "./Carriage.cpp"
 #include "./UltraSonicSensor.cpp"
 #include "./DoorController.cpp"
+#include "./LEDController.cpp"
 
 /* CONFIGURATION */
 
@@ -64,7 +65,6 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
 
     comms = new CommsChannel(WIFI_NAME, WIFI_PASSWORD);
-
     comms->connect();
 
     socket = new SocketClient(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
@@ -84,6 +84,8 @@ void setup() {
     frontSensor = new UltraSonicSensor(FRONT_SENSOR_PIN_1, FRONT_SENSOR_PIN_2);
     backSensor = new UltraSonicSensor(BACK_SENSOR_PIN_1, BACK_SENSOR_PIN_2);
 
+    led = new LEDController(17, 18, 19);
+
     bladeRunner = new Carriage(motor, door, led, frontSensor, backSensor, socket, photoReceptor);
 }
 
@@ -93,6 +95,9 @@ void loop() {
     * If Wifi is not connect, try reconnect again and then restart loop.
     */
     if(WiFi.status() != WL_CONNECTED) {
+      led->setFlashRate(500);
+      led->useLED(1);
+      led->run();
       comms->connect();
       return;
     }
@@ -179,5 +184,5 @@ void loop() {
     /*
     * Using the RBG light, display the current status.
     */
-    bladeRunner->displayStatus();
+    led->run();
 }

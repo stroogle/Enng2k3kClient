@@ -110,31 +110,45 @@ class Carriage : public ICarriage {
         void stopc() {
           stop();
           closeDoor();
+          led->setFlashRate(0);
+          led->useLED(5);
           socket->sendStatus("STOPC");
         }
 
         void stopo() {
           stop();
           openDoor();
+          led->setFlashRate(0);
+          led->useLED(5);
           socket->sendStatus("STOPO");
         }
 
         void fslowc() {
           slow();
-          while(!photoReceptor->tripped()){}
+          led->setFlashRate(0);
+          led->useLED(2);
+          while(!photoReceptor->tripped()){
+            led->run();
+          }
           stop();
           socket->sendStatus("STOPC");
         }
 
         void ffastc() {
           closeDoor();
+          led->setFlashRate(0);
+          led->useLED(3);
           go();
           socket->sendStatus("FFASTC");
         }
 
         void rslowc() {
           reverse();
-          while(!photoReceptor->tripped()){}
+          led->setFlashRate(500);
+          led->useLED(4);
+          while(!photoReceptor->tripped()){
+            led->run();
+          }
           stop();
           socket->sendStatus("STOPC");
         }
@@ -145,5 +159,7 @@ class Carriage : public ICarriage {
 
         void disconnect() {
           socket->sendStatus("OFLN");
+          led->setFlashRate(500);
+          led->useLED(6);
         }
 };

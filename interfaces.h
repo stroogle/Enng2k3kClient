@@ -78,7 +78,11 @@ class ILED {
   public:
     virtual ~ILED(){}
 
-    virtual void displayStatus(Statuses status) = 0;
+    virtual void useLED(int num) = 0;
+
+    virtual void setFlashRate(int n) = 0;
+
+    virtual void run() = 0;
 };
 
 class IDoor {
