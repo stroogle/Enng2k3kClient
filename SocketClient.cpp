@@ -1,15 +1,20 @@
 #include <WiFi.h>
 #include "interfaces.h"
+#include <Arduino.h>
 class SocketClient : public ISocketClient {
 
   public:
-    SocketClient(char* host, int port){
+    SocketClient(char* host, int port, WiFiClient c){
+      client = c;
       connect(host, port);
       lastBeat = millis();
     }
 
     void connect(char* host, int port) {
+      Serial.println("1");
       client.connect(host, port);
+      Serial.println("2");
+      delay(100);
       sendStatus("HELO");
     }
   
@@ -20,7 +25,7 @@ class SocketClient : public ISocketClient {
     void sendStatus(char* stat){
       client.println(stat);
       lastBeat = millis();
-    };
+    }
 
     Actions getAction() {
       int message = getMessage();

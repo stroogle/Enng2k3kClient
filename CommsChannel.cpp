@@ -2,14 +2,7 @@
 #include "ArduinoJson.h"
 #include "interfaces.h"
 
-// Set your Static IP address
-IPAddress local_IP(192, 168, 1, 184);
-// Set your Gateway IP address
-IPAddress gateway(192, 168, 1, 1);
 
-IPAddress subnet(255, 255, 0, 0);
-IPAddress primaryDNS(8, 8, 8, 8);   // optional
-IPAddress secondaryDNS(8, 8, 4, 4); // optional
 
 class CommsChannel : public IWifiComm {
 public:
@@ -24,34 +17,36 @@ public:
 
     // Methods
     void connect() {
+      Serial.println("MADE IUT HERE");
+      delay(100);
         initConnection();
-        if (client.connect(server, port)) {  // need Replace with actual server IP and port
-            Serial.println("Connected to CCP");
-        } else {
-            Serial.println("Connection to CCP failed");
-        }
+        // if (client.connect(server, port)) {  // need Replace with actual server IP and port
+        //     // Serial.println("Connected to CCP");
+        // } else {
+        //     // Serial.println("Connection to CCP failed");
+        // }
     }
 
     void reconnect() {
-        if (hasLostConnection()) {
-            disconnect();
-            connect();
-        }
+        // if (hasLostConnection()) {
+        //     disconnect();
+        //     connect();
+        // }
     }
 
     bool hasLostConnection() {
-        if (client.connected()) {
-            unsigned long currentMillis = millis();
-            if (currentMillis - lastResponseTime > timeout) {
-                return true;
-            }
-        }
-        return false;
+        // if (client.connected()) {
+        //     unsigned long currentMillis = millis();
+        //     if (currentMillis - lastResponseTime > timeout) {
+        //         return true;
+        //     }
+        // }
+        // return false;
     }
 
     void disconnect() {
-        client.stop();
-        Serial.println("Disconnected from CCP");
+        // client.stop();
+        // Serial.println("Disconnected from CCP");
     }
 
     // void sendMsg(char* message) {
@@ -72,19 +67,20 @@ public:
 private:
     char* ssid;
     char* password;
-    WiFiClient client;
+    // WiFiClient client;
     unsigned long lastResponseTime;
     unsigned long timeout = 500; // 500 milliseconds
-    char* server;
-    int port;
+    // char* server;
+    // int port;
 
     void initConnection() {
-        WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS);
+        WiFi.config({10, 20, 30, 108});
+        delay(500);
         WiFi.begin(ssid, password);
         while (WiFi.status() != WL_CONNECTED) {
             delay(1000);
-            Serial.println("Connecting to WiFi...");
+            // Serial.println("Connecting to WiFi...");
         }
-        Serial.println("Connected to WiFi");
+        // Serial.println("Connected to WiFi");
     }
 };

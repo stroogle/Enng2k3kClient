@@ -1,5 +1,5 @@
-#include <Arduino.h>
 #include "WiFi.h"
+
 #include "interfaces.h"
 #include "./CommsChannel.cpp"
 #include "./MotorController.cpp"
@@ -17,9 +17,17 @@ char* WIFI_PASSWORD = "";
 char* SOCKET_SERVER_ADDRESS = "10.20.30.174";
 int SOCKET_SERVER_PORT = 2006;
 
-int MOTOR_PIN = 19;
-int LED_PIN = 17;
-int PHOTO_RECEPTOR_PIN = 14; // TELL MOTIONS TO CHANGE THIS PIN
+int MOTOR_PIN = 19; // DOOR
+
+int LEDPIN1 = 21;
+int LEDPIN2 = 22;
+int LEDPIN3 = 23;
+
+// Motor A
+int motor1Pin1 = 13; // High / Low.   // ISSUE - CHANGE
+int motor1Pin2 = 18; // Low / High <-- direction
+// int motor1Pin3 = //PWM 0-255
+int enable1Pin = 4;          // ISSUE - CHANGE
 
 int FRONT_SENSOR_PIN_1 = 26;
 int FRONT_SENSOR_PIN_2 = 27;
@@ -27,7 +35,7 @@ int FRONT_SENSOR_PIN_2 = 27;
 int BACK_SENSOR_PIN_1 = 32;
 int BACK_SENSOR_PIN_2 = 33;
 
-int SERVO_PIN = 5;
+int PHOTO_RECEPTOR_PIN = 34; 
 
 bool ARE_THE_MOTOR_PINS_BACKWARD = false;
 
@@ -42,11 +50,7 @@ ILED* led;
 IDistanceSensor* frontSensor;
 IDistanceSensor* backSensor;
 
-// Motor A
-int motor1Pin1 = 27; // High / Low
-int motor1Pin2 = 26; // Low / High <-- direction
-// int motor1Pin3 = //PWM 0-255
-int enable1Pin = 14; 
+
 
 // Setting PWM properties
 int freq = 30000;
@@ -55,6 +59,7 @@ int resolution = 8;
 int dutyCycle = 200;
 IWifiComm* comms;
 ISocketClient* socket;
+WiFiClient client;
 
 // Photoreceptor
 IPhotoReceptor* photoReceptor;
@@ -64,32 +69,44 @@ ICarriage* bladeRunner;
 
 void setup() {
     Serial.begin(115200);
-
-    pinMode(LED_PIN, OUTPUT);
+    Serial.println("Beginning setup...");
+    // pinMode(LED_PIN, OUTPUT)
+    // Serial.println("Sets LED Pin");
 
     comms = new CommsChannel(WIFI_NAME, WIFI_PASSWORD);
     comms->connect();
+    Serial.println("Connecting to the WiFi complete...");
 
-    socket = new SocketClient(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
+    socket = new SocketClient(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT, client);
+    Serial.println("Socket client created...");
 
     if (ARE_THE_MOTOR_PINS_BACKWARD) {
       int temp = motor1Pin1;
       motor1Pin1 = motor1Pin2;
       motor1Pin2 = temp;
+      Serial.println("Motors pins swapped...");
+
     }
 
     motor = new MotorController(motor1Pin1, motor1Pin2, enable1Pin);
+    Serial.println("motor initiated...");
 
-    door = new DoorController(SERVO_PIN);
+    door = new DoorController(MOTOR_PIN);
+    Serial.println("Door initiated...");
 
     photoReceptor = new PhotoReceptor(PHOTO_RECEPTOR_PIN);
+    Serial.println("PhotoReceptor initiated...");
 
     frontSensor = new UltraSonicSensor(FRONT_SENSOR_PIN_1, FRONT_SENSOR_PIN_2);
+    Serial.println("Front sensor setup...");
     backSensor = new UltraSonicSensor(BACK_SENSOR_PIN_1, BACK_SENSOR_PIN_2);
+    Serial.println("Back sensor setup...");
 
-    led = new LEDController(17, 18, 19);
+    led = new LEDController(LEDPIN1, LEDPIN2, LEDPIN3);
+    Serial.println("LED setup...");
 
     bladeRunner = new Carriage(motor, door, led, frontSensor, backSensor, socket, photoReceptor);
+    Serial.println("Carriage setup...");
 
     // Setup new thread;
     xTaskCreatePinnedToCore (
@@ -101,6 +118,8 @@ void setup() {
       NULL,      // Task handle.
       0          // Core where the task should run
     );
+    Serial.println("LED thread bagins...");
+
 }
 
 void loop() {
@@ -113,6 +132,7 @@ void loop() {
       led->useLED(1);
       // led->run();
       comms->connect();
+      Serial.println("NOT CONENCTED");
       return;
     }
 
@@ -121,6 +141,7 @@ void loop() {
     */
     if(!socket->available()) {
       socket->connect(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
+      Serial.println("NOT SOCKETED");
       return;
     }
 
@@ -201,7 +222,7 @@ void loop() {
     // led->run();
 }
 
-void led_loop() {
+void led_loop(void *pvParameters) {
   while(1) {
     led->run();
   }
