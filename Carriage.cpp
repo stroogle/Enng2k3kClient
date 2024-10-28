@@ -128,7 +128,7 @@ class Carriage : public ICarriage {
           led->setFlashRate(0);
           led->useLED(2);
           while(!photoReceptor->tripped()){
-            led->run();
+            // led->run();
           }
           stop();
           socket->sendStatus("STOPC");
@@ -147,7 +147,7 @@ class Carriage : public ICarriage {
           led->setFlashRate(500);
           led->useLED(4);
           while(!photoReceptor->tripped()){
-            led->run();
+            // led->run();
           }
           stop();
           socket->sendStatus("STOPC");

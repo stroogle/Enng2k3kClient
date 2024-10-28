@@ -90,6 +90,17 @@ void setup() {
     led = new LEDController(17, 18, 19);
 
     bladeRunner = new Carriage(motor, door, led, frontSensor, backSensor, socket, photoReceptor);
+
+    // Setup new thread;
+    xTaskCreatePinnedToCore (
+      led_loop,     // Function to implement the task
+      "led_loop",   // Name of the task
+      400,      // Stack size in bytes
+      NULL,      // Task input parameter
+      0,         // Priority of the task
+      NULL,      // Task handle.
+      0          // Core where the task should run
+    );
 }
 
 void loop() {
@@ -100,7 +111,7 @@ void loop() {
     if(WiFi.status() != WL_CONNECTED) {
       led->setFlashRate(500);
       led->useLED(1);
-      led->run();
+      // led->run();
       comms->connect();
       return;
     }
@@ -187,5 +198,11 @@ void loop() {
     /*
     * Using the RBG light, display the current status.
     */
+    // led->run();
+}
+
+void led_loop() {
+  while(1) {
     led->run();
+  }
 }

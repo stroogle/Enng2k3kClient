@@ -22,13 +22,36 @@ class LEDController : public ILED {
     }
 
     void run() {
+      if(flash_interval > 0) {
+        runFlash();
+      } else {
+        runMode();
+      }
+    }
 
-      if(millis() - flash_interval > prev_flash) {
+    
+
+  private:
+    int pin1;
+    int pin2;
+    int pin3;
+    int flash_interval = 0;
+    long prev_flash;
+    int mode;
+    bool off;
+
+    void runFlash(){
+      if(millis() - flash_interval >= prev_flash) {
         digitalWrite(pin1, LOW);
         digitalWrite(pin2, LOW);
         digitalWrite(pin3, LOW);
-        return;
+      } else {
+        runMode();
+        prev_flash = millis();
       }
+    }
+
+    void runMode(){
       if(mode==1){ // Connected
         digitalWrite(pin1, HIGH);  // FLASH GREEN
         digitalWrite(pin2, LOW);
@@ -64,21 +87,5 @@ class LEDController : public ILED {
         digitalWrite(pin2, LOW);
         digitalWrite(pin3, LOW);
       }
-
-      if(millis() - prev_flash > flash_interval * 2 ) {
-        prev_flash = millis();
-        return;
-      }
     }
-
-    
-
-  private:
-    int pin1;
-    int pin2;
-    int pin3;
-    int flash_interval = 0;
-    long prev_flash;
-    int mode;
-    bool off;
 };
