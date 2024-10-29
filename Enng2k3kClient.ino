@@ -73,12 +73,12 @@ void setup() {
     // pinMode(LED_PIN, OUTPUT)
     // Serial.println("Sets LED Pin");
 
-    comms = new CommsChannel(WIFI_NAME, WIFI_PASSWORD);
-    comms->connect();
-    Serial.println("Connecting to the WiFi complete...");
+    // comms = new CommsChannel(WIFI_NAME, WIFI_PASSWORD);
+    // comms->connect();
+    // Serial.println("Connecting to the WiFi complete...");
 
-    socket = new SocketClient(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT, client);
-    Serial.println("Socket client created...");
+    // socket = new SocketClient(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT, client);
+    // Serial.println("Socket client created...");
 
     if (ARE_THE_MOTOR_PINS_BACKWARD) {
       int temp = motor1Pin1;
@@ -124,102 +124,21 @@ void setup() {
 
 void loop() {
 
-    /*
-    * If Wifi is not connect, try reconnect again and then restart loop.
-    */
-    if(WiFi.status() != WL_CONNECTED) {
-      led->setFlashRate(500);
-      led->useLED(1);
-      // led->run();
-      comms->connect();
-      Serial.println("NOT CONENCTED");
-      return;
-    }
+  led->useLED(1);
+  led->setFlashRate(500);
 
-    /*
-    * If socker connection is unavailable, the loop should try connect and restart.
-    */
-    if(!socket->available()) {
-      socket->connect(SOCKET_SERVER_ADDRESS, SOCKET_SERVER_PORT);
-      Serial.println("NOT SOCKETED");
-      return;
-    }
+  bladeRunner->ffastc();
+  delay(2000);
 
-    /*
-    * Capture the next instruction
-    */
-    Actions nextAction = socket->getAction();
+  bladeRunner->fslowc();
+  delay(1000);
 
-    /*
-    * Overwrite instruction if direct situation says to stop
-    */
-    if(bladeRunner->shouldStop()) {
-      nextAction = Actions::STOP;
-    }
+  bladeRunner->ffastc();
+  delay(1000);
 
-    /*
-    * Execute the next instruction
-    */
-    switch(nextAction) {
-      case Actions::NONE:
-        break;
-      case Actions::STOPC:
-        // bladeRunner->stop();
-        // bladeRunner->closeDoor();
-        // socket->sendStatus("STOPC");
-        bladeRunner->stopc();
-        break;
-      case Actions::STOPO:
-        // bladeRunner->stop();
-        // bladeRunner->openDoor();
-        // socket->sendStatus("STOPO");
-        bladeRunner->stopo();
-        break;
-      case Actions::FSLOWC:
-        // bladeRunner->closeDoor();
-        // bladeRunner->slow();
-        // socket->sendStatus("STOPC");
-        bladeRunner->fslowc();
-        break;
-      case Actions::FFASTC:
-        // bladeRunner->closeDoor();
-        // bladeRunner->go();
-        // socket->sendStatus("FFASTC");
-        bladeRunner->ffastc();
-        break;
-      case Actions::RSLOWC:
-        // bladeRunner->closeDoor();
-        // bladeRunner->reverse();
-        // socket->sendStatus("STOPC");
-        bladeRunner->rslowc();
-        break;
-      case Actions::DISCONNECT:
-        // socket->sendStatus("OFLN");
-        bladeRunner->disconnect();
-        break;
-      case Actions::STRQ:
-        // socket->sendStatus(bladeRunner->getStatus());
-        bladeRunner->strq();
-        break;
-      case Actions::STOP:
-        bladeRunner->stop();
-        // socket->sendStatus("STOPC");
-        break;
-      default:
-        break;
-    }
-
-    // /*
-    // * When it is time for a status update, send one.
-    // */
-    // if(socket->readyForHeartBeat()) {
-    //   socket->sendStatus(bladeRunner->getStatus());
-    // }
-
-    /*
-    * Using the RBG light, display the current status.
-    */
-    // led->run();
+  bladeRunner->rslowc();
+  delay(1000);
+   
 }
 
 void led_loop(void *pvParameters) {
